@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.cos.newssavetest.domain.NaverNews;
+import com.cos.newssavetest.handler.NaverException;
 
 @Component
 public class NaverNewsCraw {
@@ -21,15 +22,15 @@ public class NaverNewsCraw {
 		
 		
 		List<NaverNews> newsList = new ArrayList<>();
-
+		List<NaverException> excsList = new ArrayList<>();
 		for (int i = 1; i < 6; i++) {
 			String aid = String.format("%010d", aidNum);
 			String url = "https://news.naver.com/main/read.naver?mode=LSD&mid=shm&sid1=102&oid=022&aid=" + aid;
 			String html = rt.getForObject(url, String.class);
-			Document doc = null;
-			doc = Jsoup.parse(html);
 			try {
 
+				Document doc = null;
+				doc = Jsoup.parse(html);
 				Element titleelem = doc.selectFirst("#articleTitle");
 				Element timeelem = doc.selectFirst(".t11");
 				Element companyelem = doc.selectFirst("#wrap > table > tbody > tr > td.aside > div > div:nth-child(1) > h4 > em");
@@ -46,7 +47,13 @@ public class NaverNewsCraw {
 				newsList.add(navernews);
 
 			} catch (Exception e) {
-
+				System.out.println("e : " +e.getMessage() + "url :" + url);
+				NaverException naverexcs = NaverException
+						.builder()
+						.exception(e.getMessage())
+						.url(url)
+						.build();
+				excsList.add(naverexcs);
 			}
 
 			aidNum++;

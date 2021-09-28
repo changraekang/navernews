@@ -21,7 +21,7 @@ public class NaverNewsBatch {
 	private final NaverNewsCraw naverNewsCraw;
 	
 	
-	@Scheduled(fixedDelay = 1000 * 60 * 1)
+	@Scheduled(fixedDelay = 1000 * 1 * 1)
 	public void newsCrawAndSave() {
 		
 		
